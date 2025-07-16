@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Personal Expense Tracker</title>
+  <link rel="stylesheet" href="Style.css">
+</head>
+<body>
+
+  <h1>🧾 Personal Expense Tracker</h1>
+
+  <div class="expense-form">
+    <input type="text" id="expenseName" placeholder="Expense name">
+    <input type="number" id="expenseAmount" placeholder="Amount (₹)">
+    <input type="date" id="expenseDate">
+    <button onclick="addExpense()">Add</button>
+  </div>
+
+  <div class="expenses-container" id="expensesContainer">
+    <!-- Expense cards will appear here -->
+  </div>
+
+  <div class="total-expense" id="totalExpense">Total: ₹0.00</div>
+
+  <script src="script.js"></script>
+</body>
+</html>
