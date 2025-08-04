@@ -16,7 +16,7 @@ function addExpense() {
   const amount = parseFloat(document.getElementById("expenseAmount").value);
   const date = document.getElementById("expenseDate").value;
 
-  if (!name || !amount || !date) {
+  if (!name || isNaN(amount) || !date) {
     alert("Please fill all fields.");
     return;
   }
@@ -40,7 +40,7 @@ function addExpense() {
 }
 
 function renderExpense(expense) {
-  const expenseList = document.getElementById("expenseList");
+  const container = document.getElementById("expensesContainer");
 
   const card = document.createElement("div");
   card.className = "expense-card";
@@ -52,7 +52,7 @@ function renderExpense(expense) {
     <button class="delete-btn" onclick="deleteExpense(${expense.id})">×</button>
   `;
 
-  expenseList.appendChild(card);
+  container.appendChild(card);
 }
 
 function deleteExpense(id) {
@@ -64,7 +64,7 @@ function deleteExpense(id) {
 
 function updateTotal() {
   total = expenses.reduce((sum, exp) => sum + exp.amount, 0);
-  document.getElementById("totalAmount").innerText = total.toFixed(2);
+  document.getElementById("totalExpense").innerText = `Total: ₹${total.toFixed(2)}`;
 }
 
 function saveExpenses() {
