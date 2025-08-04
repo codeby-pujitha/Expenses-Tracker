@@ -1,59 +1,72 @@
+let total = 0;
 let expenses = [];
 
-function addExpense() {
-  const name = document.getElementById('expenseName').value.trim();
-  const amount = parseFloat(document.getElementById('expenseAmount').value);
-  const date = document.getElementById('expenseDate').value;
+window.onload = function () {
+  // Load from local storage
+  const saved = localStorage.getItem("expenses");
+  if (saved) {
+    expenses = JSON.parse(saved);
+    expenses.forEach(exp => renderExpense(exp));
+    updateTotal();
+  }
+};
 
-  if (!name || isNaN(amount) || amount <= 0 || !date) {
-    alert("Please enter a valid name, amount, and date.");
+function addExpense() {
+  const name = document.getElementById("expenseName").value;
+  const amount = parseFloat(document.getElementById("expenseAmount").value);
+  const date = document.getElementById("expenseDate").value;
+
+  if (!name || !amount || !date) {
+    alert("Please fill all fields.");
     return;
   }
 
-  // ✅ Push the date into the object
   const expense = {
     id: Date.now(),
-    name: name,
-    amount: amount,
-    date: date  // <- storing the date
+    name,
+    amount,
+    date
   };
 
   expenses.push(expense);
+  saveExpenses();
+  renderExpense(expense);
+  updateTotal();
 
-  // Reset fields
-  document.getElementById('expenseName').value = '';
-  document.getElementById('expenseAmount').value = '';
-  document.getElementById('expenseDate').value = '';
+  // Clear inputs
+  document.getElementById("expenseName").value = "";
+  document.getElementById("expenseAmount").value = "";
+  document.getElementById("expenseDate").value = "";
+}
 
-  renderExpenses();
+function renderExpense(expense) {
+  const expenseList = document.getElementById("expenseList");
+
+  const card = document.createElement("div");
+  card.className = "expense-card";
+  card.setAttribute("data-id", expense.id);
+  card.innerHTML = `
+    <h3>${expense.name}</h3>
+    <p>Amount: ₹${expense.amount.toFixed(2)}</p>
+    <p>Date: ${expense.date}</p>
+    <button class="delete-btn" onclick="deleteExpense(${expense.id})">×</button>
+  `;
+
+  expenseList.appendChild(card);
 }
 
 function deleteExpense(id) {
   expenses = expenses.filter(exp => exp.id !== id);
-  renderExpenses();
+  saveExpenses();
+  document.querySelector(`[data-id="${id}"]`).remove();
+  updateTotal();
 }
 
-function renderExpenses() {
-  const container = document.getElementById('expensesContainer');
-  container.innerHTML = "";
+function updateTotal() {
+  total = expenses.reduce((sum, exp) => sum + exp.amount, 0);
+  document.getElementById("totalAmount").innerText = total.toFixed(2);
+}
 
-  expenses.forEach(exp => {
-    const formattedDate = new Date(exp.date).toLocaleDateString('en-IN');
-
-    const card = document.createElement('div');
-    card.className = "expense-card";
-
-    card.innerHTML = `
-      <h3>${exp.name}</h3>
-      <p>${exp.amount.toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}</p>
-      <p><small>🗓️ ${formattedDate}</small></p>
-      <button class="delete-btn" onclick="deleteExpense(${exp.id})">Delete</button>
-    `;
-
-    container.appendChild(card);
-  });
-
-  const total = expenses.reduce((sum, exp) => sum + exp.amount, 0);
-  document.getElementById('totalExpense').textContent =
-    `Total: ${total.toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}`;
+function saveExpenses() {
+  localStorage.setItem("expenses", JSON.stringify(expenses));
 }
